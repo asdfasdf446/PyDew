@@ -32,7 +32,7 @@ class Game:
 
     def run(self):
         while True:
-            dt = self.clock.tick() / 1000
+            dt = self.clock.tick(120) / 1000
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
