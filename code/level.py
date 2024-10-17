@@ -35,7 +35,7 @@ class Level:
         # overlays
         self.overlay = Overlay(self.entities['Player'], overlay_frames)
         self.menu = Menu(self.entities['Player'], self.toggle_shop, font)
-        self.shop_active = False
+        self.shop_is_active = False
 
     def setup(self, tmx_maps, character_frames, level_frames):
         # environment
@@ -78,15 +78,13 @@ class Level:
                 if tree.rect.collidepoint(pos):
                     tree.hit(entity)
                     self.create_particle(tree)
-
-        if tool == 'hoe':
+        elif tool == 'hoe':
             self.soil_layer.hoe(pos)
-
-        if tool == 'water':
+        elif tool == 'water':
             self.soil_layer.water(pos)
-
-        if tool in ('corn', 'tomato'):
+        elif tool in ('corn', 'tomato'):
             self.soil_layer.plant_seed(pos, tool)
+
 
     def create_particle(self, sprite):
         ParticleSprite(sprite.rect.topleft, sprite.image, self.all_sprites)
@@ -142,20 +140,21 @@ class Level:
                     self.soil_layer.grid[int(plant.rect.centery / (TILE_SIZE * SCALE_FACTOR))][int(plant.rect.centerx / (TILE_SIZE * SCALE_FACTOR))].remove('P')
 
     def toggle_shop(self):
-        self.shop_active = not self.shop_active
+        self.shop_is_active = not self.shop_is_active
+        logging.debug(f"Shop status toggled. Now active: {self.shop_is_active}")
 
     def update(self, dt):
-        if not self.shop_active:
+        if not self.shop_is_active:
             self.all_sprites.update(dt)
         self.all_sprites.draw(self.entities['Player'].rect.center)
         self.plant_collision()
         self.overlay.display()
         self.sky.display(dt)
 
-        if self.shop_active:
+        if self.shop_is_active:
             self.menu.update()
 
-        if self.raining and not self.shop_active:
+        if self.raining and not self.shop_is_active:
             self.rain.update()
     
         if self.day_transition:
