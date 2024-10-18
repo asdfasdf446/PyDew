@@ -28,3 +28,9 @@ function cdi() {
     cd "$BASE_DIR/images" || return
 }
 
+# Shortcut function to run the main Python script from the base directory
+function run() {
+    cdr
+    python3 code/main.py
+}
+
