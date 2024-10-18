@@ -24,13 +24,13 @@ function cdf() {
 }
 
 # Shortcut function to change to the images directory
-function cdi() {
-    cd "$BASE_DIR/images" || return
+function cdg() {
+    cd "$BASE_DIR/graphics" || return
 }
 
 # Shortcut function to run the main Python script from the base directory
 function run() {
-    cdr
-    python3 code/main.py
+    cdc
+    python3 main.py
 }
 
