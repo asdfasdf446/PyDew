@@ -1,7 +1,12 @@
 import pygame
+import threading
+import logging
+import debug
 from settings import *
 from support import *
 from timer import Timer
+
+logger = logging.getLogger(__name__)
 
 class SoundManager:
     _instance = None
@@ -83,6 +88,16 @@ class Player(pygame.sprite.Sprite):
         # sound
         self.sound_manager = SoundManager.get_instance()
 
+        # command input
+        self.command_input = None
+        threading.Thread(target=self.get_command_input, daemon=True).start()
+
+    def get_command_input(self):
+        while True:
+            command = input("Enter direction (up, down, left, right, stop): ").strip().lower()
+            if command in ['up', 'down', 'left', 'right', 'stop']:
+                self.command_input = command
+
     def use_tool(self):
         if self.selected_tool == 'hoe':
             self.soil_layer.get_hit(self.target_pos)
@@ -133,26 +148,52 @@ class Player(pygame.sprite.Sprite):
             self.handle_tool_input(keys)
             self.handle_seed_input(keys)
             self.handle_interaction_input(keys)
+            self.handle_command_input()
 
     def handle_movement_input(self, keys):
         # directions 
         if keys[pygame.K_UP]:
             self.direction.y = -1
             self.status = 'up'
+            self.command_input = None
         elif keys[pygame.K_DOWN]:
             self.direction.y = 1
             self.status = 'down'
+            self.command_input = None
         else:
             self.direction.y = 0
 
         if keys[pygame.K_RIGHT]:
             self.direction.x = 1
             self.status = 'right'
+            self.command_input = None
         elif keys[pygame.K_LEFT]:
             self.direction.x = -1
             self.status = 'left'
+            self.command_input = None
         else:
             self.direction.x = 0
+
+    def handle_command_input(self):
+        if self.command_input == 'up':
+            self.direction.y = -1
+            self.direction.x = 0
+            self.status = 'up'
+        elif self.command_input == 'down':
+            self.direction.y = 1
+            self.direction.x = 0
+            self.status = 'down'
+        elif self.command_input == 'left':
+            self.direction.x = -1
+            self.direction.y = 0
+            self.status = 'left'
+        elif self.command_input == 'right':
+            self.direction.x = 1
+            self.direction.y = 0
+            self.status = 'right'
+        elif self.command_input == 'stop':
+            self.direction = pygame.math.Vector2()  # stop moving
+            self.command_input = None
 
     def handle_tool_input(self, keys):
         # tool use
@@ -250,3 +291,4 @@ class Player(pygame.sprite.Sprite):
 
         self.move(dt)
         self.animate(dt)
+

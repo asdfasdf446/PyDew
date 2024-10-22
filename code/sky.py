@@ -26,7 +26,7 @@ class Sky:
 
         # Log every 900 frames
         self.frame_count += 1
-        if self.frame_count >= 900:
+        if self.frame_count >= 10000:
             logger.info(f'Current RGB values: {[int(c) for c in self.start_color]}')
             self.frame_count = 0
 
