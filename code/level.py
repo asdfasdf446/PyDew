@@ -47,7 +47,6 @@ class Level:
         self.music.load('../audio/music.ogg')
         self.music.set_volume(0.3)
         self.music.play(loops=-1)
-        
 
     def setup(self):
         tmx_data = load_pygame('../data/map.tmx')
